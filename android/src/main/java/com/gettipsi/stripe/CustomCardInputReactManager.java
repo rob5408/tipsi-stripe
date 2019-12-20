@@ -11,6 +11,7 @@ import android.view.inputmethod.InputMethodManager;
 import com.devmarvel.creditcardentry.library.CreditCardForm;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.UIManagerModule;
@@ -110,6 +111,18 @@ public class CustomCardInputReactManager extends SimpleViewManager<CreditCardFor
     view.setSecurityCodeTextHint(securityCodeTextHint);
   }
 
+  @ReactProp(name = "params")
+  public void setParams(CreditCardForm view, ReadableMap card) {
+    this.setCardNumber(view, card.getString("number"));
+    int month = (int)card.getDouble("expMonth");
+    int year = (int)card.getDouble("expYear");
+    if (month == 0 || year == 0) {
+      this.setExpDate(view, "");
+    } else {
+      this.setExpDate(view, String.format("%02d" , month) + "/" + String.format("%02d" , year % 100));
+    }
+    this.setSecurityCode(view, card.getString("cvc"));
+  }
 
   private void setListeners(final CreditCardForm view){
 
