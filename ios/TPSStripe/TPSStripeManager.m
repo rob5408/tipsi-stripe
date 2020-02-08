@@ -443,7 +443,10 @@ RCT_EXPORT_METHOD(paymentRequestWithApplePay:(NSArray *)items
         // move to the end of main queue
         // allow the execution of hiding modal
         // to be finished first
-        dispatch_async(dispatch_get_main_queue(), ^{
+        // https://github.com/tipsi/tipsi-stripe/issues/315#issuecomment-473665031
+        double delayInSeconds = 1.0;
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+        dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
             [RCTPresentedViewController() presentViewController:paymentAuthorizationVC animated:YES completion:nil];
         });
     } else {
